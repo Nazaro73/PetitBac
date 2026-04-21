@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+  --ink: #111111;
 }
 
 html,
@@ -12,35 +13,71 @@ body {
 }
 
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
+  @apply bg-white text-ink antialiased font-sans;
+  background-image:
+    radial-gradient(circle at 8% 12%, rgba(0, 195, 255, 0.10) 0, transparent 35%),
+    radial-gradient(circle at 92% 88%, rgba(255, 0, 122, 0.10) 0, transparent 35%);
+  background-attachment: fixed;
 }
 
 @layer components {
+  /* ─── Buttons (néobrutalistes : bordure noire + ombre décalée) ─── */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-medium transition disabled:opacity-40 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2
+           font-bold text-ink border-[3px] border-ink shadow-pop-sm
+           transition-transform transition-shadow duration-75
+           hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0_0_#111]
+           active:translate-x-[3px] active:translate-y-[3px] active:shadow-none
+           disabled:opacity-40 disabled:cursor-not-allowed
+           disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-pop-sm;
   }
-  .btn-primary {
-    @apply btn bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-900/30;
-  }
-  .btn-secondary {
-    @apply btn bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700;
-  }
-  .btn-danger {
-    @apply btn bg-red-600 hover:bg-red-500 text-white;
-  }
-  .btn-success {
-    @apply btn bg-emerald-600 hover:bg-emerald-500 text-white;
-  }
-  .btn-warning {
-    @apply btn bg-amber-500 hover:bg-amber-400 text-slate-900;
-  }
+  .btn-primary { @apply btn bg-brand-500; }
+  .btn-secondary { @apply btn bg-white text-ink; }
+  .btn-accent { @apply btn bg-accent-500 text-white; }
+  .btn-danger { @apply btn bg-accent-500 text-white; }
+  .btn-citron { @apply btn bg-citron-500; }
+  .btn-success { @apply btn bg-brand-500; }
+  .btn-warning { @apply btn bg-citron-500; }
+
+  /* ─── Inputs ─── */
   .input {
-    @apply w-full rounded-lg bg-slate-900 border border-slate-700 px-3 py-2 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent;
+    @apply w-full rounded-xl bg-white border-[3px] border-ink px-3 py-2 text-ink
+           placeholder:text-ink/40 shadow-pop-sm
+           focus:outline-none focus:ring-0
+           focus:translate-x-[1px] focus:translate-y-[1px] focus:shadow-[2px_2px_0_0_#111];
   }
+
+  /* ─── Cards ─── */
   .card {
-    @apply rounded-2xl bg-slate-900/60 border border-slate-800 p-6 shadow-xl backdrop-blur;
+    @apply rounded-2xl bg-white border-[3px] border-ink p-6 text-ink
+           shadow-pop;
   }
+  .card-accent { @apply card shadow-pop-magenta; }
+  .card-cyan { @apply card shadow-pop-cyan; }
+
+  /* ─── Badges ─── */
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold
+           border-2 border-ink bg-white;
+  }
+
+  /* ─── Titres ─── */
+  .h-display {
+    @apply font-display font-black uppercase tracking-tight;
+  }
+  .pop-text {
+    background: linear-gradient(90deg, #00C3FF 0%, #8A53D8 50%, #FF007A 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* ─── Annotation "surligneur jaune" ─── */
+  .hl {
+    @apply relative inline-block;
+  }
+  .hl::after {
+    content: "";
+    @apply absolute left-[-2px] right-[-2px] bottom-[2px] h-[40%] bg-citron-500 -z-10 rounded-md;
   }
 }

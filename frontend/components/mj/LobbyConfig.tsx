@@ -52,28 +52,30 @@ export function LobbyConfig({
   }
 
   return (
-    <div className="card space-y-5">
+    <div className="card space-y-6">
       <div>
-        <h2 className="text-lg font-bold">Configuration de la manche</h2>
-        <p className="text-xs text-slate-500">
+        <h2 className="h-display text-2xl">
+          <span className="hl">Configuration</span> de la manche
+        </h2>
+        <p className="text-xs font-semibold text-ink/60">
           Les catégories sont immédiatement visibles par les joueurs.
         </p>
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-300">
+        <label className="mb-2 block text-sm font-bold uppercase tracking-wider">
           Catégories
         </label>
         <ul className="mb-2 flex flex-wrap gap-2">
           {categories.map((c, idx) => (
             <li
               key={c}
-              className="group flex items-center gap-1 rounded-full bg-slate-800 border border-slate-700 py-1 pl-3 pr-1 text-sm"
+              className="flex items-center gap-1 rounded-full border-[3px] border-ink bg-white py-1 pl-3 pr-1 text-sm font-bold shadow-pop-sm"
             >
               <span>{c}</span>
               <button
                 onClick={() => removeCategory(idx)}
-                className="ml-1 rounded-full bg-slate-700 hover:bg-red-500 h-5 w-5 text-xs font-bold flex items-center justify-center"
+                className="ml-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-ink bg-accent-500 text-xs font-black text-white hover:rotate-90 transition"
                 aria-label={`Retirer ${c}`}
               >
                 ×
@@ -81,7 +83,9 @@ export function LobbyConfig({
             </li>
           ))}
           {categories.length === 0 && (
-            <li className="text-xs text-amber-400">Ajoutez au moins une catégorie.</li>
+            <li className="text-xs font-bold text-accent-600">
+              Ajoutez au moins une catégorie.
+            </li>
           )}
         </ul>
         <div className="flex gap-2">
@@ -105,14 +109,16 @@ export function LobbyConfig({
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-300">
+        <label className="mb-2 block text-sm font-bold uppercase tracking-wider">
           Lettre
         </label>
         <div className="mb-3 flex items-center gap-3">
-          <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-brand-600/20 border border-brand-500/30 text-4xl font-black text-brand-200">
-            {letter || "?"}
+          <div className="flex h-20 w-20 items-center justify-center rounded-xl border-[3px] border-ink bg-white text-5xl font-black shadow-pop-sm">
+            <span className={letter ? "pop-text" : "text-ink/30"}>
+              {letter || "?"}
+            </span>
           </div>
-          <button className="btn-secondary" onClick={pickRandomLetter}>
+          <button className="btn-citron" onClick={pickRandomLetter}>
             Tirer au sort
           </button>
         </div>
@@ -121,10 +127,10 @@ export function LobbyConfig({
             <button
               key={l}
               onClick={() => setLetter(l)}
-              className={`h-8 w-8 rounded text-sm font-bold transition ${
+              className={`h-9 w-9 rounded-lg border-2 border-ink text-sm font-black transition ${
                 letter === l
-                  ? "bg-brand-500 text-white"
-                  : "bg-slate-800 hover:bg-slate-700 text-slate-300"
+                  ? "bg-accent-500 text-white shadow-pop-sm -translate-y-0.5"
+                  : "bg-white hover:bg-brand-100"
               }`}
             >
               {l}
@@ -134,11 +140,11 @@ export function LobbyConfig({
       </div>
 
       <button
-        className="btn-success w-full py-3 text-base"
+        className="btn-primary w-full py-3 text-base h-display tracking-wide"
         disabled={disabled || !letter || categories.length === 0}
         onClick={handleStart}
       >
-        Démarrer la manche
+        DÉMARRER LA MANCHE
       </button>
     </div>
   );

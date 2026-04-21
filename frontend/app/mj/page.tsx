@@ -66,11 +66,11 @@ export default function MJPage() {
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Link href="/" className="text-brand-300 hover:text-brand-200 font-bold text-lg">
-            Petit Bac
+          <Link href="/" className="h-display text-xl hover:-rotate-1 transition">
+            <span className="pop-text">PETIT BAC</span>
           </Link>
-          <span className="text-slate-600">•</span>
-          <span className="badge bg-brand-500/20 border border-brand-500/40 text-brand-200">
+          <span className="text-ink/40">•</span>
+          <span className="badge bg-accent-500 text-white">
             Maître du Jeu
           </span>
         </div>

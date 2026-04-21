@@ -13,14 +13,19 @@ export function WritingMonitor({ players, mjClientId, onStop }: Props) {
   const finished = active.filter((p) => p.finished).length;
   return (
     <div className="card space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-amber-300">Écriture en cours</h2>
-          <p className="text-sm text-slate-400">
+          <h2 className="h-display text-2xl">
+            <span className="hl">Écriture</span> en cours
+          </h2>
+          <p className="text-sm font-semibold text-ink/70">
             {finished} / {active.length} joueur{active.length > 1 ? "s" : ""} ont terminé leur grille.
           </p>
         </div>
-        <button className="btn-danger text-lg px-6 py-3" onClick={onStop}>
+        <button
+          className="btn-accent h-display text-2xl px-8 py-4 tracking-widest animate-wiggle"
+          onClick={onStop}
+        >
           STOP
         </button>
       </div>
@@ -29,20 +34,22 @@ export function WritingMonitor({ players, mjClientId, onStop }: Props) {
         {active.map((p) => (
           <li
             key={p.clientId}
-            className={`flex items-center justify-between rounded-lg border px-3 py-2 ${
-              p.finished
-                ? "border-emerald-500/40 bg-emerald-500/10"
-                : "border-slate-700 bg-slate-900/40"
+            className={`flex items-center justify-between rounded-xl border-[3px] border-ink px-3 py-2 font-bold shadow-pop-sm ${
+              p.finished ? "bg-citron-500" : "bg-white"
             }`}
           >
-            <span className={p.connected ? "" : "text-slate-500 line-through"}>{p.name}</span>
-            <span className="text-xs font-semibold uppercase tracking-wide">
-              {p.finished ? "Terminé" : "En cours…"}
+            <span className={p.connected ? "" : "text-ink/40 line-through"}>
+              {p.name}
+            </span>
+            <span className="text-xs font-black uppercase tracking-wide">
+              {p.finished ? "Terminé ✓" : "En cours…"}
             </span>
           </li>
         ))}
         {active.length === 0 && (
-          <li className="text-sm text-slate-500">Aucun joueur connecté.</li>
+          <li className="text-sm font-semibold text-ink/60">
+            Aucun joueur connecté.
+          </li>
         )}
       </ul>
     </div>

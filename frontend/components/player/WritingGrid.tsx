@@ -18,16 +18,16 @@ export function WritingGrid({ categories, letter, onSubmit, finished }: Props) {
   }
 
   return (
-    <div className="card space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">
-          Remplissez vos cases — lettre <span className="text-brand-300">{letter}</span>
+    <div className="card space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="h-display text-2xl">
+          À vos marques, lettre <span className="pop-text">{letter}</span>
         </h2>
-        <span className="text-xs text-slate-500">
-          Les saisies ne sont envoyées qu'au STOP.
+        <span className="text-xs text-ink/60 font-semibold">
+          Envoi au STOP uniquement.
         </span>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         {categories.map((category) => {
           const value = draftWords[category] ?? "";
           const startsOk =
@@ -35,9 +35,11 @@ export function WritingGrid({ categories, letter, onSubmit, finished }: Props) {
           return (
             <label key={category} className="block">
               <div className="mb-1 flex items-center justify-between text-sm">
-                <span className="font-semibold text-slate-300">{category}</span>
+                <span className="h-display text-base">
+                  <span className="hl">{category}</span>
+                </span>
                 {value && !startsOk && (
-                  <span className="text-xs text-amber-400">
+                  <span className="text-xs font-bold text-accent-600">
                     ne commence pas par {letter}
                   </span>
                 )}
@@ -56,11 +58,11 @@ export function WritingGrid({ categories, letter, onSubmit, finished }: Props) {
       </div>
 
       <button
-        className="btn-primary w-full py-3 text-base disabled:opacity-40"
+        className="btn-accent w-full py-3 text-base h-display tracking-wide"
         onClick={onSubmit}
         disabled={finished}
       >
-        {finished ? "Grille envoyée, en attente du STOP…" : "J'ai terminé ma grille"}
+        {finished ? "Grille envoyée — en attente du STOP…" : "J'AI TERMINÉ MA GRILLE"}
       </button>
     </div>
   );

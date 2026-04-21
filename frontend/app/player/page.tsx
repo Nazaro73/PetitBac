@@ -53,13 +53,13 @@ export default function PlayerPage() {
     <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Link href="/" className="text-brand-300 hover:text-brand-200 font-bold text-lg">
-            Petit Bac
+          <Link href="/" className="h-display text-xl hover:-rotate-1 transition">
+            <span className="pop-text">PETIT BAC</span>
           </Link>
-          <span className="text-slate-600">•</span>
-          <span className="text-slate-300">Joueur</span>
+          <span className="text-ink/40">•</span>
+          <span className="badge bg-brand-500">Joueur</span>
           {me && (
-            <span className="badge bg-brand-500/10 border border-brand-500/30 text-brand-200">
+            <span className="badge bg-white">
               {me.name}
             </span>
           )}
@@ -84,21 +84,23 @@ export default function PlayerPage() {
         <section className="space-y-6">
           {publicState?.phase === "lobby" && (
             <div className="card text-center py-12">
-              <h2 className="text-2xl font-bold text-slate-200">En attente du MJ</h2>
-              <p className="mt-2 text-slate-400">
+              <h2 className="h-display text-3xl">
+                <span className="hl">En attente du MJ</span>
+              </h2>
+              <p className="mt-4 text-ink/70 font-medium">
                 Le MJ prépare la prochaine manche. Vos scores sont conservés même en cas
                 de refresh.
               </p>
               {publicState.categories.length > 0 && (
                 <div className="mt-6 text-left">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <div className="text-xs font-bold uppercase tracking-wider text-ink/70">
                     Catégories prévues
                   </div>
-                  <ul className="mt-2 flex flex-wrap gap-2">
+                  <ul className="mt-3 flex flex-wrap gap-2">
                     {publicState.categories.map((c) => (
                       <li
                         key={c}
-                        className="badge bg-slate-800 border border-slate-700 text-slate-200"
+                        className="badge bg-citron-500"
                       >
                         {c}
                       </li>

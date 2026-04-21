@@ -1,5 +1,19 @@
 import type { Metadata } from "next";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "600", "800", "900"],
+  variable: "--font-poppins",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Petit Bac — Édition Maître du Jeu",
@@ -13,11 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
-      <body>
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-brand-950">
-          {children}
-        </div>
+    <html lang="fr" className={`${inter.variable} ${poppins.variable}`}>
+      <body className="font-sans">
+        <div className="min-h-screen">{children}</div>
       </body>
     </html>
   );

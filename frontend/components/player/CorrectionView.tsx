@@ -17,8 +17,10 @@ export function CorrectionView({
 }: Props) {
   return (
     <div className="card space-y-4">
-      <h2 className="text-xl font-bold">Correction en cours</h2>
-      <p className="text-sm text-slate-400">
+      <h2 className="h-display text-2xl">
+        <span className="hl">Correction en cours</span>
+      </h2>
+      <p className="text-sm text-ink/70">
         Le MJ valide chaque mot. Les points s'ajoutent en direct.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
@@ -33,24 +35,24 @@ export function CorrectionView({
           return (
             <div
               key={category}
-              className={`rounded-xl border p-3 transition ${verdictBg(verdict)} ${
+              className={`rounded-xl border-[3px] border-ink p-3 shadow-pop-sm transition ${verdictBg(verdict)} ${
                 justCorrected ? "animate-pop" : ""
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <span className="h-display text-sm">
                   {category}
                 </span>
-                <span className="text-xs font-mono text-slate-400">
+                <span className="text-xs font-black font-mono">
                   {verdictLabel(verdict)}
                 </span>
               </div>
-              <div className="mt-1 font-semibold">
-                {cell?.word ? cell.word : <span className="italic text-slate-500">(vide)</span>}
+              <div className="mt-1 font-bold text-lg">
+                {cell?.word ? cell.word : <span className="italic text-ink/40 font-medium">(vide)</span>}
               </div>
               {cell && verdict !== null && (
-                <div className="mt-1 text-xs font-bold tabular-nums text-slate-200">
-                  +{cell.points}
+                <div className="mt-1 text-xs font-black tabular-nums">
+                  +{cell.points} pt{cell.points > 1 ? "s" : ""}
                 </div>
               )}
             </div>
@@ -64,25 +66,25 @@ export function CorrectionView({
 function verdictBg(v: Verdict | null) {
   switch (v) {
     case 0:
-      return "bg-red-500/10 border-red-500/40 text-red-100";
+      return "bg-accent-500 text-white";
     case 1:
-      return "bg-amber-500/10 border-amber-500/40 text-amber-100";
+      return "bg-citron-500 text-ink";
     case 2:
-      return "bg-emerald-500/10 border-emerald-500/40 text-emerald-100";
+      return "bg-brand-500 text-ink";
     default:
-      return "bg-slate-900/40 border-slate-700 text-slate-200";
+      return "bg-white text-ink";
   }
 }
 
 function verdictLabel(v: Verdict | null) {
   switch (v) {
     case 0:
-      return "Refusé";
+      return "REFUSÉ";
     case 1:
       return "+1";
     case 2:
-      return "+2 bonus";
+      return "+2 BONUS";
     default:
-      return "En attente";
+      return "EN ATTENTE";
   }
 }
