@@ -66,6 +66,18 @@ npm install
 npm run dev
 ```
 
+### Test de fumée (end-to-end)
+
+Avec le backend lancé (par défaut `http://localhost:4000`, override via `SMOKE_URL`) :
+
+```bash
+cd backend
+PORT=4001 npm run dev &
+SMOKE_URL=http://localhost:4001 npm run smoke
+```
+
+Scénario : un MJ + deux joueurs, manche en « C », validation, pénalité, vérification des scores finaux (Alice 3, Bob 1). Couvre l'essentiel des événements WebSocket.
+
 ## Rôles & flux de jeu
 
 | Phase        | MJ                                       | Joueurs                              |
