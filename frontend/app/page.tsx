@@ -87,7 +87,7 @@ export default function HomePage() {
     <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-6 py-12">
       <header className="mb-8 text-center">
         <h1 className="h-display text-5xl sm:text-6xl leading-none">
-          <span className="pop-text">PETIT BAC</span>
+          <span className="pop-text pop-text-outlined">PETIT BAC</span>
         </h1>
         <p className="mt-3 text-xs uppercase tracking-[0.35em] text-ink/70 font-bold">
           Édition <span className="hl">Maître du Jeu</span>
