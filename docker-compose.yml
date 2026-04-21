@@ -1,0 +1,37 @@
+services:
+  game-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: petit-bac-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=${BACKEND_PORT:-4000}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - MJ_SECRET=${MJ_SECRET:-}
+    expose:
+      - "${BACKEND_PORT:-4000}"
+    networks:
+      - petit-bac-net
+
+  ngrok-tunnel:
+    image: ngrok/ngrok:latest
+    container_name: petit-bac-ngrok
+    restart: unless-stopped
+    depends_on:
+      - game-backend
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    command:
+      - "http"
+      - "game-backend:${BACKEND_PORT:-4000}"
+      - "--log=stdout"
+    ports:
+      - "4040:4040"
+    networks:
+      - petit-bac-net
+
+networks:
+  petit-bac-net:
+    driver: bridge
