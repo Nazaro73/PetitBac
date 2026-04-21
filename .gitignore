@@ -36,6 +36,9 @@ Thumbs.db
 # Testing
 coverage/
 
+# TypeScript incremental build metadata
+*.tsbuildinfo
+
 # Next.js
 .next/
 next-env.d.ts
