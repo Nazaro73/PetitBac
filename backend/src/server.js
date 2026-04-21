@@ -39,6 +39,14 @@ export function createServer() {
     res.json({ ok: true, timestamp: new Date().toISOString() });
   });
 
+  app.get("/status", (_req, res) => {
+    res.json({
+      mjClaimed: room.mjClientId !== null,
+      phase: room.phase,
+      playerCount: room.players.size,
+    });
+  });
+
   const httpServer = http.createServer(app);
 
   const io = new SocketIOServer(httpServer, {

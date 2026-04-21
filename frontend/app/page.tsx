@@ -6,6 +6,8 @@ import { loadSession, saveSession } from "@/lib/clientId";
 
 type Mode = "player" | "mj";
 
+type ServerStatus = { mjClaimed: boolean; phase: string; playerCount: number };
+
 export default function HomePage() {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("player");
@@ -13,6 +15,8 @@ export default function HomePage() {
   const [serverUrl, setServerUrl] = useState("");
   const [mjSecret, setMjSecret] = useState("");
   const [hydrated, setHydrated] = useState(false);
+  const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null);
+  const [statusError, setStatusError] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = loadSession();
@@ -25,12 +29,46 @@ export default function HomePage() {
     setHydrated(true);
   }, []);
 
+  useEffect(() => {
+    const trimmed = serverUrl.trim().replace(/\/+$/, "");
+    if (!/^https?:\/\//.test(trimmed)) {
+      setServerStatus(null);
+      setStatusError(null);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      fetch(`${trimmed}/status`, {
+        headers: { "ngrok-skip-browser-warning": "true" },
+        signal: controller.signal,
+      })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+        .then((data: ServerStatus) => {
+          setServerStatus(data);
+          setStatusError(null);
+        })
+        .catch((e: Error) => {
+          if (e.name === "AbortError") return;
+          setServerStatus(null);
+          setStatusError(e.message || "Serveur injoignable");
+        });
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [serverUrl]);
+
+  const mjBlocked = serverStatus?.mjClaimed === true;
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = serverUrl.trim().replace(/\/+$/, "");
     if (!trimmed) return;
     if (!/^https?:\/\//.test(trimmed)) return;
     if (mode === "player" && !name.trim()) return;
+    if (mode === "mj" && !mjSecret.trim()) return;
+    if (mode === "mj" && mjBlocked) return;
 
     saveSession({
       role: mode,
@@ -78,16 +116,19 @@ export default function HomePage() {
             </button>
             <button
               type="button"
-              onClick={() => setMode("mj")}
+              onClick={() => !mjBlocked && setMode("mj")}
+              disabled={mjBlocked}
               className={`rounded-xl border-[3px] border-ink p-4 text-left transition ${
-                mode === "mj"
-                  ? "bg-accent-500 text-white shadow-pop-sm"
-                  : "bg-white hover:bg-accent-50"
+                mjBlocked
+                  ? "bg-white opacity-40 cursor-not-allowed"
+                  : mode === "mj"
+                    ? "bg-accent-500 text-white shadow-pop-sm"
+                    : "bg-white hover:bg-accent-50"
               }`}
             >
               <div className="h-display text-lg">MAÎTRE DU JEU</div>
-              <div className={`text-xs font-medium ${mode === "mj" ? "text-white/90" : "text-ink/70"}`}>
-                J'héberge le backend en Docker.
+              <div className={`text-xs font-medium ${mode === "mj" && !mjBlocked ? "text-white/90" : "text-ink/70"}`}>
+                {mjBlocked ? "Partie déjà en cours." : "J'héberge le backend en Docker."}
               </div>
             </button>
           </div>
@@ -131,27 +172,42 @@ export default function HomePage() {
         {mode === "mj" && (
           <div>
             <label htmlFor="secret" className="mb-2 block text-sm font-bold uppercase tracking-wider">
-              Jeton MJ <span className="text-ink/60 font-medium normal-case">(optionnel)</span>
+              Mot de passe MJ
             </label>
             <input
               id="secret"
               className="input"
-              placeholder="Laissez vide si non configuré"
+              placeholder="Mot de passe configuré côté backend"
               value={mjSecret}
               onChange={(e) => setMjSecret(e.target.value)}
               type="password"
+              required
+              autoComplete="current-password"
             />
             <p className="mt-1 text-xs text-ink/60">
-              Correspond à la variable <code className="font-mono bg-citron-100 px-1 rounded">MJ_SECRET</code> du backend.
+              Correspond à la variable <code className="font-mono bg-citron-100 px-1 rounded">MJ_SECRET</code> du backend (fichier <code className="font-mono bg-citron-100 px-1 rounded">.env</code>).
             </p>
           </div>
         )}
 
+        {mjBlocked && mode === "mj" && (
+          <p className="rounded-lg border-2 border-ink bg-accent-50 p-3 text-sm font-medium text-ink">
+            Une partie est déjà en cours sur ce serveur. Repasse en <strong>JOUEUR</strong> pour la rejoindre.
+          </p>
+        )}
+
+        {statusError && serverUrl.trim() && (
+          <p className="text-xs text-ink/60">
+            Impossible de joindre le serveur ({statusError}).
+          </p>
+        )}
+
         <button
           type="submit"
+          disabled={mode === "mj" && mjBlocked}
           className={`w-full py-3 text-base h-display tracking-wide ${
             mode === "mj" ? "btn-accent" : "btn-primary"
-          }`}
+          } ${mode === "mj" && mjBlocked ? "opacity-40 cursor-not-allowed" : ""}`}
         >
           {mode === "mj" ? "OUVRIR LE TABLEAU MJ" : "REJOINDRE LA PARTIE"}
         </button>
