@@ -216,6 +216,18 @@ export class GameRoom {
     return { ok: true };
   }
 
+  fullReset() {
+    this.phase = Phase.Lobby;
+    this.letter = null;
+    this.roundNumber = 0;
+    this.answers = new Map();
+    this.finished = new Set();
+    for (const p of this.players.values()) {
+      p.score = 0;
+    }
+    return { ok: true };
+  }
+
   // ─────────────────────────────────────────── Snapshots ───
 
   /**

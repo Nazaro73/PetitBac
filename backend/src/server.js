@@ -26,6 +26,7 @@ export function createServer() {
       credentials: true,
     }),
   );
+  app.use(express.json({ limit: "4kb" }));
 
   app.get("/", (_req, res) => {
     res.json({
@@ -45,6 +46,18 @@ export function createServer() {
       phase: room.phase,
       playerCount: room.players.size,
     });
+  });
+
+  app.post("/auth/mj", (req, res) => {
+    const secret = typeof req.body?.secret === "string" ? req.body.secret : "";
+    if (config.mjSecret && secret !== config.mjSecret) {
+      return res.status(401).json({ ok: false, reason: "invalid_secret" });
+    }
+    if (!config.mjSecret && room.mjClientId) {
+      // Fallback sans mot de passe : premier arrivé, pas de reclaim.
+      return res.status(409).json({ ok: false, reason: "already_claimed" });
+    }
+    res.json({ ok: true });
   });
 
   const httpServer = http.createServer(app);

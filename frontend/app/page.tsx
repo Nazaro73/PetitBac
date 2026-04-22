@@ -17,6 +17,8 @@ export default function HomePage() {
   const [hydrated, setHydrated] = useState(false);
   const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     const saved = loadSession();
@@ -61,14 +63,46 @@ export default function HomePage() {
 
   const mjBlocked = serverStatus?.mjClaimed === true;
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = serverUrl.trim().replace(/\/+$/, "");
     if (!trimmed) return;
     if (!/^https?:\/\//.test(trimmed)) return;
     if (mode === "player" && !name.trim()) return;
     if (mode === "mj" && !mjSecret.trim()) return;
-    if (mode === "mj" && mjBlocked) return;
+
+    setAuthError(null);
+
+    if (mode === "mj") {
+      setSubmitting(true);
+      try {
+        const res = await fetch(`${trimmed}/auth/mj`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+          },
+          body: JSON.stringify({ secret: mjSecret.trim() }),
+        });
+        if (res.status === 401) {
+          setAuthError("Mot de passe MJ incorrect.");
+          return;
+        }
+        if (res.status === 409) {
+          setAuthError("Une partie est déjà en cours sur ce serveur.");
+          return;
+        }
+        if (!res.ok) {
+          setAuthError(`Erreur serveur (${res.status}).`);
+          return;
+        }
+      } catch {
+        setAuthError("Impossible de joindre le serveur.");
+        return;
+      } finally {
+        setSubmitting(false);
+      }
+    }
 
     saveSession({
       role: mode,
@@ -116,19 +150,16 @@ export default function HomePage() {
             </button>
             <button
               type="button"
-              onClick={() => !mjBlocked && setMode("mj")}
-              disabled={mjBlocked}
+              onClick={() => setMode("mj")}
               className={`rounded-xl border-[3px] border-ink p-4 text-left transition ${
-                mjBlocked
-                  ? "bg-white opacity-40 cursor-not-allowed"
-                  : mode === "mj"
-                    ? "bg-accent-500 text-white shadow-pop-sm"
-                    : "bg-white hover:bg-accent-50"
+                mode === "mj"
+                  ? "bg-accent-500 text-white shadow-pop-sm"
+                  : "bg-white hover:bg-accent-50"
               }`}
             >
               <div className="h-display text-lg">MAÎTRE DU JEU</div>
-              <div className={`text-xs font-medium ${mode === "mj" && !mjBlocked ? "text-white/90" : "text-ink/70"}`}>
-                {mjBlocked ? "Partie déjà en cours." : "J'héberge le backend en Docker."}
+              <div className={`text-xs font-medium ${mode === "mj" ? "text-white/90" : "text-ink/70"}`}>
+                J'héberge le backend en Docker.
               </div>
             </button>
           </div>
@@ -191,8 +222,14 @@ export default function HomePage() {
         )}
 
         {mjBlocked && mode === "mj" && (
-          <p className="rounded-lg border-2 border-ink bg-accent-50 p-3 text-sm font-medium text-ink">
-            Une partie est déjà en cours sur ce serveur. Repasse en <strong>JOUEUR</strong> pour la rejoindre.
+          <p className="rounded-lg border-2 border-ink bg-citron-100 p-3 text-sm font-medium text-ink">
+            Une partie est déjà en cours. Le bon mot de passe te permettra de reprendre le rôle de MJ.
+          </p>
+        )}
+
+        {authError && (
+          <p className="rounded-lg border-2 border-accent-500 bg-accent-50 p-3 text-sm font-bold text-accent-700">
+            {authError}
           </p>
         )}
 
@@ -204,12 +241,16 @@ export default function HomePage() {
 
         <button
           type="submit"
-          disabled={mode === "mj" && mjBlocked}
+          disabled={submitting}
           className={`w-full py-3 text-base h-display tracking-wide ${
             mode === "mj" ? "btn-accent" : "btn-primary"
-          } ${mode === "mj" && mjBlocked ? "opacity-40 cursor-not-allowed" : ""}`}
+          } ${submitting ? "opacity-40 cursor-not-allowed" : ""}`}
         >
-          {mode === "mj" ? "OUVRIR LE TABLEAU MJ" : "REJOINDRE LA PARTIE"}
+          {submitting
+            ? "VÉRIFICATION…"
+            : mode === "mj"
+              ? "OUVRIR LE TABLEAU MJ"
+              : "REJOINDRE LA PARTIE"}
         </button>
       </form>
 

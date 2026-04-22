@@ -23,6 +23,9 @@ export function registerMJHandlers({ io, socket, room, mjSecret, broadcastState 
       configuredSecret: mjSecret,
     });
     if (!result.ok) {
+      logger.warn(
+        `mj_claim rejected (${result.reason}) for client ${clientId} — secret length: ${(payload.secret ?? "").length}, configured length: ${mjSecret.length}`,
+      );
       if (typeof ack === "function") ack(result);
       return;
     }
@@ -136,6 +139,15 @@ export function registerMJHandlers({ io, socket, room, mjSecret, broadcastState 
     if (!requireMJ(ack)) return;
     room.resetToLobby();
     logger.info("room reset to lobby");
+    io.emit("lobby_reset", {});
+    if (typeof ack === "function") ack({ ok: true });
+    broadcastState();
+  });
+
+  socket.on("mj_full_reset", (_payload = {}, ack) => {
+    if (!requireMJ(ack)) return;
+    room.fullReset();
+    logger.info("room full reset (scores cleared)");
     io.emit("lobby_reset", {});
     if (typeof ack === "function") ack({ ok: true });
     broadcastState();

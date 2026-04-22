@@ -60,6 +60,14 @@ export default function MJPage() {
     window.location.href = "/";
   }
 
+  function handleFullReset() {
+    const ok = window.confirm(
+      "Réinitialiser la partie ? Les scores seront remis à zéro et le numéro de manche repartira de 0. Les joueurs connectés seront conservés.",
+    );
+    if (!ok) return;
+    emit("mj_full_reset", {});
+  }
+
   const phase = publicState?.phase ?? mjState?.phase;
 
   return (
@@ -76,6 +84,9 @@ export default function MJPage() {
         </div>
         <div className="flex items-center gap-3">
           <ConnectionStatus connected={connected} error={connectionError} />
+          <button onClick={handleFullReset} className="btn-secondary text-xs">
+            Nouvelle partie
+          </button>
           <button onClick={handleLeave} className="btn-secondary text-xs">
             Quitter
           </button>
