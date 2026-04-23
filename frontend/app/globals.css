@@ -72,8 +72,9 @@ body {
     color: transparent;
   }
   .pop-text-outlined {
-    -webkit-text-stroke: 2px #111111;
-    paint-order: stroke fill;
+    -webkit-text-fill-color: #111111;
+    color: #111111;
+    -webkit-text-stroke: 0;
   }
 
   /* ─── Annotation "surligneur jaune" ─── */
