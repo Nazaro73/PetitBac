@@ -124,12 +124,31 @@ export function useGameConnection({ requiredRole }: Options) {
       // Les joueurs envoient leur grille courante dès réception.
       if (session.role === "player") {
         const words = useGameStore.getState().draftWords;
-        socket.emit("submit_words", { words });
+        socket.emit(
+          "submit_words",
+          { words },
+          (ack: { ok: boolean; ownAnswers?: PlayerState["ownAnswers"] } | undefined) => {
+            if (ack?.ok && ack.ownAnswers) {
+              store.setOwnAnswers(ack.ownAnswers);
+            }
+          },
+        );
       }
     }
 
     function onLiveCorrection(payload: LiveCorrectionPayload) {
       store.applyLiveCorrection(payload);
+      if (payload.playerClientId === clientId) {
+        const current = useGameStore.getState().ownAnswers ?? {};
+        useGameStore.getState().setOwnAnswers({
+          ...current,
+          [payload.category]: {
+            word: payload.word,
+            verdict: payload.verdict,
+            points: payload.points,
+          },
+        });
+      }
     }
 
     function onPenaltyApplied(payload: PenaltyPayload) {

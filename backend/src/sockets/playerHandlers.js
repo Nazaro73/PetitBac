@@ -43,7 +43,9 @@ export function registerPlayerHandlers({ io, socket, room, broadcastState }) {
       if (typeof ack === "function") ack(result);
       return;
     }
-    if (typeof ack === "function") ack({ ok: true });
+    if (typeof ack === "function") {
+      ack({ ok: true, ownAnswers: room.playerSnapshot(clientId).ownAnswers });
+    }
     broadcastState();
   });
 }
